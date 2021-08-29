@@ -1,43 +1,40 @@
-import {
-  API_CALL_REQUEST,
-  API_CALL_FAILURE,
-  API_CALL_SUCCESS,
-} from "./userTypes";
+import { createReducer } from "reduxsauce";
 
-const initialState = {
-  loading: false,
-  users: [],
-  error: "",
+import { Types } from "./userActions";
+
+export const INITIAL_STATE = {
+  isLoading: false,
 };
 
-function userReducer(state = initialState, action) {
-  switch (action.type) {
-    case API_CALL_REQUEST:
-      return {
-        ...state,
-        loading: true,
-        error: "",
-      };
+export const getUsersRequest = (state = INITIAL_STATE) => {
+  return {
+    ...state,
+    isLoading: true,
+    isError: false,
+  };
+};
 
-    case API_CALL_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        users: action.payload,
-        error: "",
-      };
+export const getUsersRequestSuccess = (state = INITIAL_STATE, { response }) => {
+  return {
+    ...state,
+    isLoading: false,
+    isError: false,
+    usersInfo: response.data,
+  };
+};
 
-    case API_CALL_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        users: [],
-        error: action.payload,
-      };
+export const getUsersRequestFailure = (state = INITIAL_STATE) => {
+  return {
+    ...state,
+    isLoading: false,
+    isError: true,
+  };
+};
 
-    default:
-      return state;
-  }
-}
+export const HANDLERS = {
+  [Types.GET_USERS_REQUEST]: getUsersRequest,
+  [Types.GET_USERS_REQUEST_SUCCESS]: getUsersRequestSuccess,
+  [Types.GET_USERS_REQUEST_FAILURE]: getUsersRequestFailure,
+};
 
-export default userReducer;
+export default createReducer(INITIAL_STATE, HANDLERS);
